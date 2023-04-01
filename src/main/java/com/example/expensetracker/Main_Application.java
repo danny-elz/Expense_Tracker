@@ -98,6 +98,22 @@ public class Main_Application extends Application {
 
         mainRoot.add(DELETE_EXPENSE ,0,12);
 
+
+        // Creating a button for opening the budget page
+        Button BUDGET_PAGE = new Button("Budget");
+        BUDGET_PAGE.setStyle("-fx-background-color: black; -fx-text-fill: white;");
+        BUDGET_PAGE.setPrefWidth(200);
+
+        mainRoot.add(BUDGET_PAGE, 3, 12);
+
+        // Setting up the action for opening the budget page
+        BUDGET_PAGE.setOnAction(e -> {
+            // Creating an instance of the budget page and showing the stage
+            BudgetPage budgetPage = new BudgetPage();
+            budgetPage.show();
+        });
+
+
         // Setting the layout's horizontal and vertical gap
         mainRoot.setHgap(10);
         mainRoot.setVgap(10);
@@ -128,6 +144,21 @@ public class Main_Application extends Application {
             _DATE.clear();
             _DESCRIPTION.clear();
             _AMOUNT.clear();
+        });
+
+
+        DELETE_EXPENSE.setOnAction(e -> {
+            Expense selectedExpense = table.getSelectionModel().getSelectedItem();
+            if (selectedExpense != null) {
+                table.getItems().remove(selectedExpense);
+            } else {
+                // Displaying an error message if no expense is selected
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText(null);
+                alert.setContentText("Please select an expense to delete.");
+                alert.show();
+            }
         });
 
         // Spanning some layout elements across multiple columns
