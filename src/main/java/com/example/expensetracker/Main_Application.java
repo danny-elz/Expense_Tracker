@@ -11,13 +11,15 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Objects;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.*;
 
 import static com.example.expensetracker.Login_File.addUser_FILE;
 
@@ -32,7 +34,7 @@ public class Main_Application extends Application {
 
         // Creating the main layout
         GridPane mainRoot = new GridPane();
-        Scene scene = new Scene(mainRoot, 700, 800);
+        Scene scene = new Scene(mainRoot, 700, 700);
         mainRoot.setPadding(new Insets(20.10));
 
         // Creating the table for displaying expenses
@@ -48,10 +50,15 @@ public class Main_Application extends Application {
         TableColumn<Expense, Integer> amount = new TableColumn<>("Amount");
         amount.setCellValueFactory(new PropertyValueFactory<>("amount"));
 
+        TableColumn<Expense, String> type = new TableColumn<>("Type");
+        type.setCellValueFactory(new PropertyValueFactory<>("type"));
+
+
         // Adding the columns to the table
         table.getColumns().add(date);
         table.getColumns().add(description);
         table.getColumns().add(amount);
+        table.getColumns().add(type);
 
         table.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
@@ -68,9 +75,9 @@ public class Main_Application extends Application {
         TextField _DATE = new TextField();
         _DATE.setPromptText("dd/mm/yyyy");
 
-        mainRoot.add(_DATE, 0, 3);
-        mainRoot.add(_DESCRIPTION, 3, 3);
-        mainRoot.add(_AMOUNT, 1, 3);
+        mainRoot.add(_DATE, 0, 5);
+        mainRoot.add(_DESCRIPTION, 3, 5);
+        mainRoot.add(_AMOUNT, 1, 5);
 
         // Creating a combo box for filtering expenses
         ComboBox<String> AMOUNT_CB = new ComboBox<>();
@@ -78,33 +85,32 @@ public class Main_Application extends Application {
         List<String> filterOptions = new ArrayList<>();
         filterOptions.add("Expenses");
         filterOptions.add("Income");
+        filterOptions.add("none");
         AMOUNT_CB.getItems().addAll(filterOptions);
         AMOUNT_CB.setPrefWidth(200);
 
-        mainRoot.add(AMOUNT_CB, 3, 5);
+        mainRoot.add(AMOUNT_CB, 3, 7);
 
         // Creating a button for adding expenses
         Button ADD_EXPENSE = new Button("Add");
         ADD_EXPENSE.setStyle("-fx-background-color: black; -fx-text-fill: white;");
         ADD_EXPENSE.setPrefWidth(200);
 
-        mainRoot.add(ADD_EXPENSE, 0, 5);
+        mainRoot.add(ADD_EXPENSE, 0, 7);
 
         // Creating a button for deleting expenses
-
         Button DELETE_EXPENSE = new Button("Remove");
         DELETE_EXPENSE.setStyle("-fx-background-color: red; -fx-text-fill: white;");
         DELETE_EXPENSE.setPrefWidth(200);
 
-        mainRoot.add(DELETE_EXPENSE ,0,12);
-
+        mainRoot.add(DELETE_EXPENSE ,0,11);
 
         // Creating a button for opening the budget page
         Button BUDGET_PAGE = new Button("Budget");
         BUDGET_PAGE.setStyle("-fx-background-color: black; -fx-text-fill: white;");
         BUDGET_PAGE.setPrefWidth(200);
 
-        mainRoot.add(BUDGET_PAGE, 3, 12);
+        mainRoot.add(BUDGET_PAGE, 3, 11);
 
         // Setting up the action for opening the budget page
         BUDGET_PAGE.setOnAction(e -> {
@@ -113,6 +119,17 @@ public class Main_Application extends Application {
             budgetPage.show();
         });
 
+        Button SAVE_EXPENSES = new Button("Save Expenses");
+        SAVE_EXPENSES.setStyle("-fx-background-color: blue; -fx-text-fill: white;");
+        SAVE_EXPENSES.setPrefWidth(200);
+
+        mainRoot.add(SAVE_EXPENSES, 3, 9);
+
+        Button LOG_OUT = new Button("Log Out");
+        LOG_OUT.setStyle("-fx-background-color: black; -fx-text-fill: white;");
+        LOG_OUT.setPrefWidth(80);
+
+        mainRoot.add(LOG_OUT, 0, 1);
 
         // Setting the layout's horizontal and vertical gap
         mainRoot.setHgap(10);
@@ -121,15 +138,15 @@ public class Main_Application extends Application {
         // Creating labels for the columns
         Text DATE = new Text();
         DATE.setText("Date");
-        mainRoot.add(DATE, 0, 1);
+        mainRoot.add(DATE, 0, 3);
 
         Text DESCRIPTION = new Text();
         DESCRIPTION.setText("Description");
-        mainRoot.add(DESCRIPTION, 3, 1);
+        mainRoot.add(DESCRIPTION, 3, 3);
 
         Text AMOUNT = new Text();
         AMOUNT.setText("Amount");
-        mainRoot.add(AMOUNT, 1, 1);
+        mainRoot.add(AMOUNT, 1, 3);
 
         // Setting up the action for adding expenses
         ADD_EXPENSE.setOnAction(e -> {
@@ -137,15 +154,40 @@ public class Main_Application extends Application {
             String _description = _DESCRIPTION.getText();
             String _amount = _AMOUNT.getText();
 
-            // Adding the expense to the table
-            table.getItems().add(new Expense(datePicker, _description, _amount));
+            try {
+                LocalDate.parse(datePicker, Expense.DATE_FORMAT);
+            } catch (DateTimeParseException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid Date");
+                alert.setHeaderText(null);
+                alert.setContentText("Please enter a date following the format of dd/mm/yyyy.");
+                alert.show();
+                return;
+            }
 
-            // Clearing the text fields
+            try {
+                Double.parseDouble(_amount);
+            } catch (NumberFormatException ex) {
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Invalid Amount");
+                alert.setHeaderText(null);
+                alert.setContentText("Please enter a valid amount.");
+                alert.show();
+                return;
+            }
+
+            // Adding the expense to the table
+            if (AMOUNT_CB.getSelectionModel().getSelectedItem().equals("Filter") || (AMOUNT_CB.getSelectionModel().getSelectedItem().equals("none"))) {
+                table.getItems().add(new Expense(datePicker, _description, _amount));
+                } else {
+                table.getItems().add(new Expense(datePicker, _description, _amount, AMOUNT_CB.getSelectionModel().getSelectedItem()));
+            }
+
+                // Clearing the text fields
             _DATE.clear();
             _DESCRIPTION.clear();
             _AMOUNT.clear();
         });
-
 
         DELETE_EXPENSE.setOnAction(e -> {
             Expense selectedExpense = table.getSelectionModel().getSelectedItem();
@@ -161,13 +203,49 @@ public class Main_Application extends Application {
             }
         });
 
+        SAVE_EXPENSES.setOnAction(e -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save Expenses");
+            fileChooser.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("CSV Files", "*.csv"),
+                    new FileChooser.ExtensionFilter("All Files", "*.*"));
+
+            // Showing the dialog
+            File file = fileChooser.showSaveDialog(stage);
+            if (file != null) {
+                try {
+                    // Writing the expenses to the file
+                    FileWriter writer = new FileWriter(file);
+                    for (Expense expense : table.getItems()) {
+                        writer.write(expense.getDate() + "," + expense.getDescription() + "," + expense.getAmount() + "," + expense.getType() + "\n");
+                    }
+                    writer.close();
+
+                    // Displaying a success message
+                    Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                    alert.setTitle("Expenses Saved");
+                    alert.setHeaderText(null);
+                    alert.setContentText("Your expenses have been saved to: " + file.getAbsolutePath());
+                    alert.showAndWait();
+
+                } catch (IOException ex) {
+                    // Displaying an error message if there was a problem writing to the file
+                    Alert alert = new Alert(Alert.AlertType.ERROR);
+                    alert.setTitle("Error");
+                    alert.setHeaderText(null);
+                    alert.setContentText("There was a problem saving your expenses.");
+                    alert.showAndWait();
+                }
+            }
+        });
+
         // Spanning some layout elements across multiple columns
         GridPane.setColumnSpan(stackPane, 4);
         GridPane.setColumnSpan(DATE, 2);
         GridPane.setColumnSpan(DESCRIPTION, 2);
         GridPane.setColumnSpan(AMOUNT, 2);
 
-        // Creating the login layout
+       //login layout
         GridPane loginRoot = new GridPane();
         Scene loginScene = new Scene(loginRoot, 400, 250);
         loginRoot.setPadding(new Insets(20, 10, 10, 10));
@@ -238,12 +316,26 @@ public class Main_Application extends Application {
             }
         });
 
+        LOG_OUT.setOnAction(e -> {
+            Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+            alert.setTitle("Confirm Log Out");
+            alert.setHeaderText(null);
+            alert.setContentText("Are you sure you want to log out?");
+
+            Optional<ButtonType> result = alert.showAndWait();
+            if (result.get() == ButtonType.OK){
+                // Switching to the login scene if the user confirms they want to log out
+                stage.setScene(loginScene);
+            }
+        });
+
         // Adding the login and signup buttons to the login layout
         loginRoot.add(loginButton, 1, 7);
         loginRoot.add(signupButton, 1, 14);
         Label blank_1 = new Label("");
         blank_1.setPrefHeight(10);
         loginRoot.add(blank_1, 1, 8);
+
 
         // Setting the stage's title and showing the login scene
         stage.setTitle("Expense Tracker");
