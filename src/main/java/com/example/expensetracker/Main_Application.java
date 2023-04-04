@@ -39,7 +39,6 @@ public class Main_Application extends Application {
 
         // Creating the table for displaying expenses
         TableView<Expense> table = new TableView<>();
-
         // Creating columns for the table
         TableColumn<Expense, Date> date = new TableColumn<>("Date");
         date.setCellValueFactory(new PropertyValueFactory<>("date"));

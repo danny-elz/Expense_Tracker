@@ -1,8 +1,6 @@
 package com.example.expensetracker;
 
 import javafx.beans.property.SimpleStringProperty;
-
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
 public class Expense {
@@ -11,10 +9,7 @@ public class Expense {
     private String date;
     private String description;
     private String amount;
-
     private SimpleStringProperty type;
-
-
 
     public Expense(String date, String description, String amount, String type) {
         this.date = date;
