@@ -1,3 +1,9 @@
+/**
+ The BudgetPage class is used to create a JavaFX stage for tracking a user's budget.
+ It contains a pie chart displaying the user's budget progress for food, entertainment, and transportation,
+ and fields for inputting and saving new budget values.
+ @author [Author Name]
+ */
 package com.example.expensetracker;
 
 import javafx.collections.FXCollections;
@@ -13,17 +19,45 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 
 public class BudgetPage extends Stage {
-
+    /**
+     * The layout for the BudgetPage stage.
+     */
     private GridPane layout;
+    /**
+     * The PieChart for displaying the user's budget progress.
+     */
     private PieChart chart;
+    /**
+     * The TextField for inputting the user's food budget.
+     */
     private TextField foodBudgetField;
+    /**
+     * The TextField for inputting the user's entertainment budget.
+     */
     private TextField entertainmentBudgetField;
+    /**
+     * The TextField for inputting the user's transportation budget.
+     */
     private TextField transportationBudgetField;
+    /**
+     * The Label for displaying the food budget field's purpose.
+     */
     private Label foodBudgetLabel;
+    /**
+     * The Label for displaying the entertainment budget field's purpose.
+     */
     private Label entertainmentBudgetLabel;
+    /**
+     * The Label for displaying the transportation budget field's purpose.
+     */
     private Label transportationBudgetLabel;
+    /**
+     * The Button for saving the user's budget and updating the chart.
+     */
     private Button saveButton;
-
+    /**
+     * Creates a new BudgetPage instance and initializes its components.
+     */
     public BudgetPage() {
         layout = new GridPane();
         Scene scene = new Scene(layout, 500, 500);
@@ -44,6 +78,7 @@ public class BudgetPage extends Stage {
         saveButton = new Button("Save Budget");
         saveButton.setOnAction(e -> {
             try {
+                // Parse user input to doubles and update chart data
                 double foodBudget = Double.parseDouble(foodBudgetField.getText());
                 double entertainmentBudget = Double.parseDouble(entertainmentBudgetField.getText());
                 double transportationBudget = Double.parseDouble(transportationBudgetField.getText());
@@ -69,6 +104,7 @@ public class BudgetPage extends Stage {
         layout.setPadding(new Insets(20));
         layout.setVgap(10);
 
+        // Add components to the layout
         layout.add(chart, 0, 0, 4, 4);
         layout.add(foodBudgetLabel, 0, 5);
         layout.add(foodBudgetField, 2, 5);

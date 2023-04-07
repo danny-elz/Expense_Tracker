@@ -1,3 +1,10 @@
+/**
+ The Main_Application class is responsible for creating the main layout and managing the user interface of the Expense Tracker application.
+ It includes methods for displaying expenses, adding expenses, removing expenses, filtering expenses, saving expenses to a CSV file, logging in and signing up users.
+ This class extends the Application class from JavaFX to create a graphical user interface.
+ @author [Danny, Julian]
+ */
+
 package com.example.expensetracker;
 
 import javafx.application.Application;
@@ -24,14 +31,28 @@ import java.util.*;
 import static com.example.expensetracker.Login_File.addUser_FILE;
 
 public class Main_Application extends Application {
-
+    /**
+     * The main method launches the application.
+     *
+     * @param args - the command line arguments
+     */
     public static void main(String[] args) {
         launch(args);
     }
 
+    /**
+     * The start method sets up the graphical user interface and defines the actions
+     * for each button and text field. It creates the main layout for the application,
+     * which includes a table for displaying expenses, text fields for adding expenses,
+     * and buttons for filtering expenses, adding expenses, removing expenses, and saving
+     * expenses to a CSV file. It also includes a button for logging out and a button for
+     * opening the budget page. Additionally, it creates a separate login layout for
+     * authenticating users.
+     *
+     * @param stage - the primary stage for the application
+     */
     @Override
     public void start(Stage stage) {
-
         // Creating the main layout
         GridPane mainRoot = new GridPane();
         Scene scene = new Scene(mainRoot, 700, 700);
@@ -51,7 +72,6 @@ public class Main_Application extends Application {
 
         TableColumn<Expense, String> type = new TableColumn<>("Type");
         type.setCellValueFactory(new PropertyValueFactory<>("type"));
-
 
         // Adding the columns to the table
         table.getColumns().add(date);
@@ -102,7 +122,7 @@ public class Main_Application extends Application {
         DELETE_EXPENSE.setStyle("-fx-background-color: red; -fx-text-fill: white;");
         DELETE_EXPENSE.setPrefWidth(200);
 
-        mainRoot.add(DELETE_EXPENSE ,0,11);
+        mainRoot.add(DELETE_EXPENSE, 0, 11);
 
         // Creating a button for opening the budget page
         Button BUDGET_PAGE = new Button("Budget");
@@ -178,16 +198,16 @@ public class Main_Application extends Application {
             // Adding the expense to the table
             if (AMOUNT_CB.getSelectionModel().getSelectedItem().equals("Filter") || (AMOUNT_CB.getSelectionModel().getSelectedItem().equals("none"))) {
                 table.getItems().add(new Expense(datePicker, _description, _amount));
-                } else {
+            } else {
                 table.getItems().add(new Expense(datePicker, _description, _amount, AMOUNT_CB.getSelectionModel().getSelectedItem()));
             }
 
-                // Clearing the text fields
+            // Clearing the text fields
             _DATE.clear();
             _DESCRIPTION.clear();
             _AMOUNT.clear();
         });
-
+        // Action for deleting expenses
         DELETE_EXPENSE.setOnAction(e -> {
             Expense selectedExpense = table.getSelectionModel().getSelectedItem();
             if (selectedExpense != null) {
@@ -202,6 +222,7 @@ public class Main_Application extends Application {
             }
         });
 
+        // Action for saving expenses
         SAVE_EXPENSES.setOnAction(e -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Save Expenses");
@@ -244,7 +265,7 @@ public class Main_Application extends Application {
         GridPane.setColumnSpan(DESCRIPTION, 2);
         GridPane.setColumnSpan(AMOUNT, 2);
 
-       //login layout
+        //login layout
         GridPane loginRoot = new GridPane();
         Scene loginScene = new Scene(loginRoot, 400, 250);
         loginRoot.setPadding(new Insets(20, 10, 10, 10));
@@ -255,17 +276,26 @@ public class Main_Application extends Application {
         blank_2.setPrefHeight(10);
         loginRoot.add(blank_2, 0, 11);
 
+        // A text field for the user to enter a new username for sign up
         TextField signUpUsernameField = new TextField();
+        // A text field for the user to enter a new password for sign up
         TextField signUpPasswordField = new TextField();
         loginRoot.add(new Label("New Username"), 0, 12);
         loginRoot.add(signUpUsernameField, 1, 12);
         loginRoot.add(new Label("New Password"), 0, 13);
         loginRoot.add(signUpPasswordField, 1, 13);
 
+        // A text field for the user to enter their login username
         TextField loginUsernameField = new TextField();
+
+        // A password field for the user to enter their login password
         PasswordField loginPasswordField = new PasswordField();
+
+        // Adding a label for the login username and adding it to the GridPane
         loginRoot.add(new Label("Username:"), 0, 5);
         loginRoot.add(loginUsernameField, 1, 5);
+
+        // Adding a label for the login password and adding it to the GridPane
         loginRoot.add(new Label("Password:"), 0, 6);
         loginRoot.add(loginPasswordField, 1, 6);
 
@@ -286,12 +316,14 @@ public class Main_Application extends Application {
         });
 
         Button signupButton = new Button("Sign Up");
+
+        // Sign up button action
         signupButton.setOnAction(e -> {
             String username = signUpUsernameField.getText();
             String password = signUpPasswordField.getText();
             User newUser = new User(username, password);
 
-            // Checking if the username and password fields are not empty before adding the user
+            // Checking if the username and password fields aren't empty before adding the user
             if (!Objects.equals(username, "") && !Objects.equals(password, "")) {
                 try {
                     addUser_FILE(newUser);
@@ -311,10 +343,10 @@ public class Main_Application extends Application {
                 alert.setHeaderText(null);
                 alert.setContentText("Failed to create user.");
                 alert.show();
-
             }
         });
 
+        // Logout button action
         LOG_OUT.setOnAction(e -> {
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirm Log Out");
@@ -322,7 +354,7 @@ public class Main_Application extends Application {
             alert.setContentText("Are you sure you want to log out?");
 
             Optional<ButtonType> result = alert.showAndWait();
-            if (result.get() == ButtonType.OK){
+            if (result.get() == ButtonType.OK) {
                 // Switching to the login scene if the user confirms they want to log out
                 stage.setScene(loginScene);
             }
@@ -342,6 +374,13 @@ public class Main_Application extends Application {
         stage.show();
     }
 
+    /**
+     * Determines if the given username and password are valid credentials for a registered user.
+     *
+     * @param username The username to check
+     * @param password The password to check
+     * @return True if the username and password match a registered user, false otherwise
+     */
     private boolean isValidUser(String username, String password) {
         try {
             // Reading the list of users from the user file
@@ -358,6 +397,3 @@ public class Main_Application extends Application {
         return false;
     }
 }
-
-
-
