@@ -2,7 +2,7 @@
  The Login_File class handles reading and writing user credentials to a file.
  It provides methods for reading user credentials from a file and writing new user credentials to a file.
  The user credentials are stored in the "users.txt" file.
- @author [Author Name]
+ @author [Danny]
  */
 package com.example.expensetracker;
 import java.io.*;

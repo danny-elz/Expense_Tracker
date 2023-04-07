@@ -10,7 +10,7 @@
  The class also provides a static constant DATE_FORMAT field representing the date format "dd/MM/yyyy".
  This field is used to format and parse the expense date.
  The type field is stored as a SimpleStringProperty for binding to a JavaFX UI element.
- @author [Author Name]
+ @author [Julian, Danny]
  */
 package com.example.expensetracker;
 import javafx.beans.property.SimpleStringProperty;

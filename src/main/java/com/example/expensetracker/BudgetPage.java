@@ -2,7 +2,7 @@
  The BudgetPage class is used to create a JavaFX stage for tracking a user's budget.
  It contains a pie chart displaying the user's budget progress for food, entertainment, and transportation,
  and fields for inputting and saving new budget values.
- @author [Author Name]
+ @author [Danny]
  */
 package com.example.expensetracker;
 

@@ -3,7 +3,7 @@
  The User class represents a user with a username and password.
  It provides methods for getting and setting the username and password.
  The class is used in the Login_File class to store user credentials.
- @author [Author Name]
+ @author [Julian]
  */
 package com.example.expensetracker;
 public class User {

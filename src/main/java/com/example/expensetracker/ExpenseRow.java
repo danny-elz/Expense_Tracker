@@ -6,7 +6,7 @@
  The class is used in the ExpenseTable class to store individual expense entries.
  The class contains a static count field to keep track of the total number of expense rows created.
  When a new ExpenseRow object is created, the count field is incremented and assigned as the object's ID.
- @author [Author Name]
+ @author [Julian]
  */
 package com.example.expensetracker;
 public class ExpenseRow {
