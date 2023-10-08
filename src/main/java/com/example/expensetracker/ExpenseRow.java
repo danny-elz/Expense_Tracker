@@ -1,5 +1,4 @@
 /**
-
  The ExpenseRow class represents a row in the expense table.
  It contains an ID and an Expense object.
  The ID is used to uniquely identify the expense row in the table.
